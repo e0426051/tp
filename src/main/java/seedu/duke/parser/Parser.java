@@ -110,7 +110,12 @@ public class Parser {
                     new TaskCommand().deleteTaskCommand(PARAMS);
                     break;
                 case VIEW:
-                    new TaskCommand().viewTaskCommand(PARAMS);
+                    try {
+                        new TaskCommand().viewTaskCommand(rawArgs);
+                    } catch (NumberFormatException e) {
+                        //e.printExceptionMessage();
+                        System.out.println("Please enter a number!");
+                    }
                     break;
                 case PRIORITY:
                     try {
@@ -120,7 +125,12 @@ public class Parser {
                     }
                     break;
                 case DONE:
-                    new TaskCommand().doneTaskCommand(PARAMS);
+                    try {
+                        new TaskCommand().doneTaskCommand(rawArgs);
+                    } catch (NumberFormatException e) {
+                        //e.printExceptionMessage();
+                        System.out.println("Please enter a number!");
+                    }
                     break;
                 default:
                     try {
