@@ -27,6 +27,7 @@ public class CommandSummary {
     public static final String DURATION = "dur";
     public static final String SELECT = "select";
     public static final String LIST = "list";
+    public static final String RETROSPECTIVE = "retrospective";
 
     /*
     Parameters
@@ -35,6 +36,10 @@ public class CommandSummary {
     public static final String DESCRIPTION = "desc";
     public static final String SPRINT_DURATION = "sd";
     public static final String TASK_ID = "id";
+    public static final String ACHIEVEMENT = "achievement";
+    public static final String IMPROVEMENT = "improvement";
+    public static final String COMMITMENT = "commitment";
+    public static final String SPRINT_ID = "id";
 
     /*
     Help

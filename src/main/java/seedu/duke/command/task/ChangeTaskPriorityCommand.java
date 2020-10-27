@@ -12,18 +12,18 @@ import static seedu.duke.command.CommandSummary.PRIORITY;
 import static seedu.duke.command.CommandSummary.TASK_ID;
 
 public class ChangeTaskPriorityCommand extends Command {
-    private final ProjectManager projectListManager;
+    private final ProjectManager projectManager;
     private Project proj;
 
-    public ChangeTaskPriorityCommand(Hashtable<String,String> parameters, ProjectManager projectListManager) {
+    public ChangeTaskPriorityCommand(Hashtable<String,String> parameters, ProjectManager projectManager) {
         super(parameters, true);
-        this.projectListManager = projectListManager;
+        this.projectManager = projectManager;
     }
 
     public void execute() {
 
-        assert !projectListManager.isEmpty() : "No project\n";
-        if (projectListManager.isEmpty()) {
+        assert !projectManager.isEmpty() : "No project\n";
+        if (projectManager.isEmpty()) {
             Ui.showError("Please create a project first.");
             return;
         }
@@ -35,7 +35,7 @@ public class ChangeTaskPriorityCommand extends Command {
         id = Integer.parseInt(parameters.get(TASK_ID));
         priority = parameters.get(PRIORITY).trim();
 
-        Project proj = projectListManager.getSelectedProject();
+        Project proj = projectManager.getSelectedProject();
         try {
             task = proj.getProjectBacklog().getTask(id);
             if (!proj.getProjectBacklog().checkValidPriority(priority)) {

@@ -9,23 +9,23 @@ import seedu.duke.ui.Ui;
 import java.util.Hashtable;
 
 public class ViewTaskCommand extends TaskCommand {
-    private final ProjectManager projectListManager;
+    private final ProjectManager projectManager;
     private Project proj;
 
-    public ViewTaskCommand(Hashtable<String, String> parameters, ProjectManager projectListManager) {
+    public ViewTaskCommand(Hashtable<String, String> parameters, ProjectManager projectManager) {
         super(parameters, false);
-        this.projectListManager = projectListManager;
+        this.projectManager = projectManager;
     }
 
     public void execute() {
-        assert !projectListManager.isEmpty() : "No project found!\n";
-        if (projectListManager.isEmpty()) {
+        assert !projectManager.isEmpty() : "No project found!\n";
+        if (projectManager.isEmpty()) {
             Ui.showError("Please create a project first.");
             return;
         }
 
         try {
-            Project proj = projectListManager.getSelectedProject();
+            Project proj = projectManager.getSelectedProject();
             if (parameters.isEmpty()) {
                 Ui.showError("Missing parameters.");
                 return;
