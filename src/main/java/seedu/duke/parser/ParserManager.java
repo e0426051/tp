@@ -78,7 +78,8 @@ public class ParserManager {
                 case STORAGE:
                     return new StorageParser().parseMultipleCommandsExceptions(parameters, action, projectListManager);
                 case RETROSPECTIVE:
-                    return new RetrospectiveParser().parseMultipleCommandsExceptions(parameters, action, projectListManager);
+                    return new RetrospectiveParser()
+                            .parseMultipleCommandsExceptions(parameters, action, projectListManager);
                 default:
                     return new InvalidCommand(parameters);
                 }

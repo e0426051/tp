@@ -19,7 +19,8 @@ public class SprintRetrospective implements JsonableObject {
     public SprintRetrospective() {
     }
 
-    public SprintRetrospective(int id, String title, int sprintId, String achievement, String improvement, String commitment) {
+    public SprintRetrospective(String title, int sprintId,
+            String achievement, String improvement, String commitment) {
         //achievement = what went well
         //improvement = what can improve
         //goal = what improvements to implement for next sprint

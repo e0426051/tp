@@ -13,7 +13,7 @@ import static seedu.duke.command.CommandSummary.IMPROVEMENT;
 import static seedu.duke.command.CommandSummary.SPRINT_ID;
 import static seedu.duke.command.CommandSummary.TITLE;
 
-public class AddSprintRetrospectiveCommand extends SprintRetrospectiveCommand{
+public class AddSprintRetrospectiveCommand extends SprintRetrospectiveCommand {
     public AddSprintRetrospectiveCommand(Hashtable<String, String> parameters, ProjectManager projectList) {
         super(parameters, projectList,true);
     }
@@ -25,8 +25,6 @@ public class AddSprintRetrospectiveCommand extends SprintRetrospectiveCommand{
             Ui.showError("Please create a project first.");
             return;
         }
-        // // //
-        System.out.println(projectList.isEmpty());
 
         Project proj = projectList.getSelectedProject();
         assert !(proj.getSprintList().size() == 0) : "There are no completed sprints!\n";
@@ -34,18 +32,16 @@ public class AddSprintRetrospectiveCommand extends SprintRetrospectiveCommand{
             Ui.showError("Please create and finish a sprint first.");
             return;
         }
-        // // //
-        System.out.println(proj.getSprintList().size());
 
         String achievement;
         String improvement;
-        String commitment;
         String title;
-        int sprintId;
-
         title = parameters.get(TITLE);
         achievement = parameters.get(ACHIEVEMENT);
         improvement = parameters.get(IMPROVEMENT);
+
+        String commitment;
+        int sprintId;
         commitment = parameters.get(COMMITMENT);
         sprintId = Integer.parseInt(parameters.get(SPRINT_ID).trim());
 

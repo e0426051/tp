@@ -9,7 +9,7 @@ import seedu.duke.ui.Ui;
 
 import java.util.Hashtable;
 
-public class DeleteSprintRetrospectiveCommand extends SprintRetrospectiveCommand{
+public class DeleteSprintRetrospectiveCommand extends SprintRetrospectiveCommand {
 
     public DeleteSprintRetrospectiveCommand(Hashtable<String, String> parameters, ProjectManager projectList) {
         super(parameters, projectList,true);

@@ -47,9 +47,10 @@ public class SprintRetrospectiveManager implements JsonableObject {
         return retrospectiveList.get(this.currentIndex - 1);
     }
 
-    public void addRetrospective(int sprintId, String title, String achievement, String improvement, String commitment) {
-        int id = ++currentIndex;
-        retrospectiveList.add(new SprintRetrospective(id, title, sprintId, achievement, improvement, commitment));
+    public void addRetrospective(int sprintId, String title, String achievement,
+            String improvement, String commitment) {
+        ++currentIndex;
+        retrospectiveList.add(new SprintRetrospective(title, sprintId, achievement, improvement, commitment));
     }
 
     @Override

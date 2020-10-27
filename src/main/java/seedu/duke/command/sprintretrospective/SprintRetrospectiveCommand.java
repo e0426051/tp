@@ -8,8 +8,9 @@ import java.util.Hashtable;
 
 public abstract class SprintRetrospectiveCommand extends Command {
     protected ProjectManager projectList;
-    //protected SprintManager sprintList = projectList.getSelectedProject().getSprintList();
-    public SprintRetrospectiveCommand(Hashtable<String, String> parameters, ProjectManager projectList, boolean shouldSave) {
+
+    public SprintRetrospectiveCommand(Hashtable<String, String> parameters,
+            ProjectManager projectList, boolean shouldSave) {
         super(parameters, shouldSave);
         this.projectList = projectList;
     }
