@@ -31,7 +31,14 @@
         1. [Add Task to Sprint](#add-task-to-sprint)
         1. [Remove Task from Sprint](#remove-task-from-sprint)
         1. [Allocate Sprint Tasks to Members](#allocate-sprint-tasks-to-members)        
-    1. [Saving of Data](#saving-of-data)
+    1. [Storage](#storage)
+        1. [Location](#location)
+        1. [Loading Data](#loading-data)
+            1. [Converting and Mapping of JSON to Objects](#converting-and-mapping-of-json-to-objects)
+        1. [Saving Data](#saving-data)
+            1. [When the Program Exits](#when-the-program-exits)
+            1. [Changes Made to the Data](#changes-made-to-the-data)
+            1. [Serialising Objects to JSON](#serialising-objects-to-json)
 1. [Appendix: Requirements]()
 1. [Others](#target-user-profile)
 
@@ -86,9 +93,89 @@ Each of the modules listed above are a collection of constituent classes, with e
 ### UI Component
 ![Figure X: Simplified class diagram for UI Component](./image/developerguide/UI.png "User Interface")  
 ### Logic Component
-{UML}
+![Figure X: Simplified class diagram for Logic Component](./image/developerguide/parserandcommand.png)
+
+When a user types a command, `SCRUMptious`calls the `ParserManager`. The `ParserManager` then parses commands from the user. Subsequently, 
+the `ParserManager` passes the commands on to the respective exceptions parsers which inherit from the `ExceptionsParser` interface. 
+The exceptions parsers consist of:  
+- `ProjectParser`
+- `MemberParser`
+- `TaskParser`
+- `SprintParser`
+- `HelpParser`
+
+The `ProjectParser` validates the parameters of the command. If the command is valid, it returns the respective `ProjectCommandXYZ` to the `ParserManager`.
+If the command is invalid, the `ProjectParser` returns an appropriate warning message to the user.  
+
+The `MemberParser` validates the parameters of the command. If the command is valid, it returns the respective `MemberCommandXYZ` to the `ParserManager`.
+If the command is invalid, the `TaskParser` returns an appropriate warning message to the user.  
+
+The `TaskParser` validates the parameters of the command. If the command is valid, it returns the respective `TaskCommandXYZ` to the `ParserManager`.
+If the command is invalid, the `TaskParser` returns an appropriate warning message to the user.  
+
+The `SprintParser` validates the parameters of the command. If the command is valid, it returns the respective `SprintCommandXYZ` to the `ParserManager`.
+If the command is invalid, the `SprintParser` returns an appropriate warning message to the user.  
+
+The `HelpParser` validates the parameters of the command. If the command is valid, it returns the respective `HelpParserCommandXYZ` to the `ParserManager`.
+If the command is invalid, the `HelpParser` returns an appropriate warning message to the user.
+
+
+The subcommand classes `HelpParserCommandXYZ`, `ProjectCommandXYZ`, `MemberCommandXYZ`, `TaskCommandXYZ`, `SprintCommandXYZ` all inherit from an abstract `Command` class, 
+which has an execute function.
+
+The `ParserManager` then returns the command back to `SCRUMptious`, which then executes the command.
+
+A detailed list of the subcommand classes is as follows:
+* Project Commands:  
+    * `CreateProjectCommand`
+    * `ListProjectCommand`
+    * `SelectProjectCommand`
+    * `ViewProjectCommand`
+* Member Commands:
+    * `AddMemberCommand`
+    * `DeleteMemberCommand`
+* Task Commands:
+    * `AddTaskCommand`
+    * `ChangeTaskPriorityCommand`
+    * `DeleteTaskCommand`
+    * `DoneTaskCommand`
+    * `ViewTaskCommand`
+* Sprint Commands:
+    * `AddSprintTaskCommand`
+    * `AllocateSprintTaskCommand`
+    * `CreateSprintCommand`
+    * `DeallocateSprintTaskCommand`
+    * `EditSprintCommand`
+    * `RemoveSprintTaskCommand`
+    * `ViewSprintCommand`
+* Help Commands:
+    * `HelpCommand`
+    * `MemberHelpCommand`
+    * `ProjectHelpCommand`
+    * `SprintHelpCommand`
+    * `StorageHelpCommand`
+    * `TaskHelpCommand`
 ### Model Component
-{UML}
+![Figure X: Simplified class diagram for Model Component](./image/developerguide/modelcomponent.png "Storage Component UML")  
+Link: [Model Package](https://github.com/AY2021S1-CS2113T-F11-4/tp/tree/master/src/main/java/seedu/duke/model)  
+The Model
+* Includes four packages namely, Project, Task, Member and Sprint.
+
+Project package
+* Includes a ProjectList to manage the multiple instances of Project created by the user
+* Each instance of Project stores one instance of ProjectBacklog, ProjectMembers and SprintList.
+
+Task  package
+* Includes a ProjectBacklog to manage every Tasks created by the user
+* Task can be allocated to Sprints and can be assigned to Members, 
+
+Member package
+* Includes a ProjectMembers to manage every Members created by the user
+* Member can be assigned with Tasks and can be allocated to Sprints holding those Tasks
+ 
+Sprint package
+* Includes a SprintList to manage every Sprints created by the user
+* Sprint can contain Tasks and Members allocated to those Tasks
 ### Storage Component
 ![Figure X: Simplified class diagram for Storage Component, Model and json.simple](./image/developerguide/storagecomponent.png "Storage Component UML")  
   
@@ -106,10 +193,7 @@ As shown in the diagram above, `JsonableObject` and `JsonableArray` are interfac
 
 This requires the model classes to implement two methods required for JSON serialisation and deserialisation:  
 - `toJson()`: Contains logic required to convert the model object into JSON string.  
-- `fromJson()`: Contains logic required to convert JSON object into its respective model class.  
-  - Due to the limitations of the library, parsing of the JSON string only converts it into either `JsonObject` or `JsonArray` objects which requires additional operations to map the data back to the respective model classes.  
-  - `fromJson()` will take in either one of the `JsonObject` or `JsonArray` object, and map the properties to the respective properties of the model classes.  
-
+- `fromJson()`: Contains logic required to convert JSON object into its respective model class.    
 
 ## Implementation
 ### Project
@@ -166,22 +250,211 @@ is passed, the following operations are implemented:
     * The corresponding task is marked as done in the program.
     
 ### Sprint
-#### Create Sprint
-#### View Sprint
-#### Add Task to Sprint
-#### Remove Task from Sprint
-#### Allocate Sprint Tasks to Members    
-### Saving of Data
-To make the data persistent and portable, **JSON** has been chosen as the format for data to be saved to a persistent storage such as storage drives, thumb drives and any other storage medium that is used to run the program. JSON is also human-readable which allows users to directly modify the data file easily which can be useful in certain scenarios such as fixing the data file in the event of data corruption.
+In SCRUMptious, a Project will be broken down into smaller iterations known as Sprints. The Sprint will contain information about the Tasks allocated for that iteration and Members that are assigned to complete the Tasks.
 
+The following section will explain how the management of Sprints is implemented in the program.
+
+#### Create Sprint
+
+![Figure X: Sequence diagram of CreateSprintCommand](./image/developerguide/createSprint.png "Create Sprint Sequence Diagram")  
+  
+Link: [CreateSprintCommand.java](/src/main/java/seedu/duke/command/sprint/CreateSprintCommand.java) 
+
+A Sprint can be created when there is an existing Project.
+When the Project is created, the duration of the Project and length of the Sprints are specified, thus, there will be a finite number of Sprints for each Project.
+
+
+Before execution:
+1. Parse user input into Command
+
+    SCRUMptious will receive user input using the `Ui` class and parse it into `CreateSprintCommand` with `Parser` and `SprintParser`.
+1. Execute CreateSprintCommand
+
+    SCRUMptious calls `Command.execute()` which will execute the command as mentioned in the implementation.
+
+Implementation:
+1. Choose the Project to add the new Sprint
+
+    `chooseProject()` will be called to check for the optional `-project` tag in the user specified parameters.
+    
+    Note: If the tag is not specified, the default Project in the ProjectManager indexed by `selectedProject` will be chosen.
+1. Prepare parameters
+    
+    `prepareParameters()` will be called to check for the mandatory `-goal` tag in the user specified parameters.
+    In addition, It will also prepare the optional `-start` tag as required in the following two scenarios:
+    1. New Sprint is first Sprint in Project
+        
+        Being the first Sprint in the Project, the `-start` tag will determine the start date for both the new Sprint and Project.
+        Thus, the `String` parameter will be sent to _DateTimeParser_ via `parseDate()` to parse it into a _LocalDate_ object.
+        
+        The end date for the Project and Sprint will also be determined by adding `projectDuration` and `sprintLength` to the start date respectively.
+        
+    1. New Sprint is not first Sprint in Project
+    
+        As there is a previous Sprint before the newly created Sprint, the new Sprint will start the day after the previous 
+        Sprint ends. Thus, the `-start` tag will be ignored even if specified by user.
+
+1. Check all sprint created
+
+    With all the necessary parameters prepared, the command will check if there is still room to add new Sprint by checking
+    if the prepared `sprintEndDate` is after the `projectEndDate`.
+    
+    Note: This check is done after the `prepareParameters()` as the _LocalDate_ `sprintEndDate` is required.
+    
+1. Update Project Start and End date if new Sprint is first Sprint
+
+    As mentioned above, if the new Sprint is the first Sprint in the Project, the `-start` tag will determine the start and end date of the Project.
+1. Add Sprint to Sprint Manger
+    
+    `addSprint()` is finally called to add a new Sprint to the Sprint Manager.
+   
+1. Output to User
+    
+    `printCreatedSprint()` is then called to output the newly created Sprint in `createdSprint.toString` via `Ui.showToUserLn()`
+
+#### View Sprint
+
+Link: [ViewSprintCommand.java](/src/main/java/seedu/duke/command/sprint/ViewSprintCommand.java) 
+
+A Sprint can only be viewed when there is an existing Sprint. When the user request to view the sprint, the Sprint number is specified and the program will output the information about the Sprint corresponding to the Sprint number.
+
+Prerequisites:    
+1. At least one Sprint in the SprintList
+
+Implementation:
+1. UI receive user input
+1. Parser parse user input
+1. Execute ViewSprintCommand
+    1. Get Sprint from SprintList
+    1. UI output to user
+
+#### Add Task to Sprint
+
+Link: [AddSprintTaskCommand.java](/src/main/java/seedu/duke/command/sprint/AddSprintTaskCommand.java) 
+
+Users can add Tasks existing in the Project Backlog to the Sprint, indicating that the Tasks are to be worked on during the iteration. 
+
+Prerequisites:    
+1. At least one Sprint in the SprintList
+1. At least one Task in the ProjectBacklog
+
+Implementation:
+1. UI receive user input
+1. Parser parse user input
+1. Execute AddSprintTaskCommand
+    1. On Sprint 
+        1. Add Task ID into sprintTaskIds
+    1. On Task
+        1. Add Sprint Number into sprintAllocatedTo
+    1. UI output to user
+
+
+#### Remove Task from Sprint
+
+Link: [RemoveSprintTaskCommand.java](/src/main/java/seedu/duke/command/sprint/RemoveSprintTaskCommand.java) 
+
+Users can remove Tasks from Sprint, indicating that the Tasks are deemed to not be worked on during the iteration. 
+
+Prerequisites:    
+1. At least one Sprint in the SprintList
+1. At least one Task is added to the selected Sprint
+
+Implementation:
+1. UI receive user input
+1. Parser parse user input
+1. Execute RemoveSprintTaskCommand
+    1. On Sprint 
+        1. Remove Task ID from sprintTaskIds
+    1. On Task
+        1. Remove Sprint Number from sprintAllocatedTo
+    1. UI output to user
+
+#### Allocate Sprint Tasks to Members   
+
+Link: [AllocateSprintTaskCommand.java](/src/main/java/seedu/duke/command/sprint/AllocateSprintTaskCommand.java) 
+ 
+Users can allocate Sprint Tasks to Members, indicating that the Tasks are assigned to the selected member to work on during the iteration. 
+
+Prerequisites:    
+1. At least one Task is added to the selected Sprint
+1. At least one Member is added to the Project
+
+Implementation:
+1. UI receive user input
+1. Parser parse user input
+1. Execute AllocateSprintTaskCommand
+    1. On Task
+        1. Add Member ID into membersAllocatedTo
+    1. On Member
+        1. Add Task ID into allocatedTaskIds
+
+
+### Storage
+To make the data persistent and portable, JSON has been chosen as the format for data to be saved to a persistent storage such as storage drives, thumb drives and any other storage medium which stores the program. JSON is also **human-readable** which allows users to directly modify the data file easily. This can be useful in certain scenarios such as fixing the data file in the event of data corruption.
+
+#### Location
 ![Figure X: Running the Jar](image/developerguide/savingdata1.png "Running the Jar")  
 _Figure X: Running the Jar_  
-![Figure X: Running the Jar](image/developerguide/savingdata2.png "Running in IDE")  
+![Figure X: Running in IDE](image/developerguide/savingdata2.png "Running in IDE")  
 _Figure X: Running in IDE_  
 
-As shown in the above diagram, the program will save the data as “data.json”. The data file is saved in the “data/” folder that is located in the folder of the program. If you are testing the program using Intellij IDE, the “data/” folder will be in the root of the project folder. 
+As shown in the above diagram, the program will save the data as _"data.json"_. The data file is saved in the _“data/”_ folder that is located in the folder of the program. If you are testing the program using Intellij IDE, the _“data/”_ folder will be in the root of the project folder.  
+When you start the program, the program will load the data file from its respective location and deserialise it into its respective objects. Data will be saved when the program exits or whenever the user makes changes to the program.  
+
+#### Loading Data
+![Figure X: Loading Data](image/developerguide/storage_load.png "Loading Data")  
+
+The program will only load the data file in the persistent storage during the initialisation process of the program. With reference to the sequence diagram above, the flow of the logic is as follows:  
+1. When the user starts the program, it will first call `init()` to initialise the program. 
+2. A `StorageManager` object will be instantiated with the reference to a `ProjectManager` object that is used during load and save operations.
+3. `load()` will read the data file from the persistent storage, deserialise it into a `JsonObject` object and attempt to convert the object into its respective types.  
   
-When you start the program, the program will load the data file from its respective location and deserialise it into its respective object instances. Data will be saved when the program exits or whenever the user makes changes to the program.  
+The program will exit immediately with an **exit code 1** if any of the conditions are met:
+- Error trying to read the file.
+- Conversion error due to missing properties.
+- Mapping error due to invalid property type (e.g. "name" is expecting a `String` but data read is an `Integer`).
+
+##### Converting and Mapping of JSON to Objects
+Due to the limitations of the library, parsing of the JSON string only converts it into either JsonObject or JsonArray objects which requires additional operations to map the data back to the respective model classes.  
+  
+As explained in [Storage Component](#storage-component), each model class except for `Priority` will inherit either `JsonableObject` or `JsonableArray` which are custom interfaces inheriting the `Jsonable` interface of _**json.simple**_. This requires the classes to implement the methods `toJson()` and `fromJson()`. This section will focus on `fromJson()`, which is used to implement the logic for **converting and mapping of JSON to objects of their respective type**.  
+  
+1. After loading the raw JSON string, `StorageManager` will call `Jsoner.deserialize()` to convert it into an object of `JsonObject`.
+2. At this point, `JsonObject` contains all the properties of `ProjectManager` and needs to be mapped back to a `ProjectManager` object.
+3. `StorageManager` will call `ProjectManager.fromJson()`, passing the `JSONObject` object from _Step 2_ as the parameter. 
+4. In `fromJson()`, there are two type of actions depending on the property it is mapping:  
+   1. **Type Casting**: Properties that are primitive or standard can be mapped directly through type casting (e.g. `int`, `boolean`, `String` etc.)
+   2. **\*Calling `fromJson()` of the Actual Type**: Any property that is originally a type of the **Scrumptious model classes** will be mapped with the following steps:
+      1. Create an empty object of the respective type (e.g. `Sprint`).
+      2. Type cast the property as `JsonObject` or `JsonArray` depending on the actual type of the property (e.g. `(JsonArray) object`).
+      3. Call `fromJson()` of the newly created object, passing the property as the parameter (e.g. `Sprint.fromJson()`).
+      4. New object's `fromJson()` will **repeat the same process again under Step 4** for its own properties.  
+      
+*`Priority` is an **enum** and is the only model which does not follow this strictly. It is mapped by type casting the property as `String` first, then calling the `Priority.valueOf()` method to convert it into its respective **enum**.  
+
+#### Saving Data
+![Figure X: Saving Data](image/developerguide/storage_save.png "Saving Data")  
+
+Data will be saved under two scenarios: 1. When the program exits. 2. Changes made to the data. 
+
+##### When the Program Exits
+`Scrumptious` will call `destroy()` which calls `save()` before it returns.
+
+##### Changes Made to the Data
+Changes made to the data during the runtime of the program can only be made by executing a command.
+   
+As shown in the diagram above, each command class inherits the `shouldSave` property from `Command` class. `shouldSave` is a boolean variable and is initialised inside the constructor. `shouldSave` will be set to `true` if the command results in a change of data (e.g. adding a task, creating a sprint etc.), otherwise it is set to `false` (e.g. viewing projects, sprints etc.).
+
+After executing the command by calling `execute()`, the program will call `save()` from `StorageManager` object if the `shouldSave` is set to `true`.
+
+##### Serialising Objects to JSON
+As explained in [Storage Component](#storage-component), each model class except for `Priority` will inherit either `JsonableObject` or `JsonableArray` which are custom interfaces inheriting the `Jsonable` interface of _**json.simple**_. This requires the classes to implement the methods `toJson()` and `fromJson()`. This section will focus on `toJson()`, which is used to implement the logic for **serialising objects into JSON string**.  
+When saving the data as JSON file, `StorageManager` will call `Jsoner.serialize()` of the _**json.simple**_, passing in the `ProjectManager` and `FileWriter` (points to the data file) object as the parameters. The library will automatically serialise the objects and sub-objects into JSON string depending on the type of the objects:
+ 1. **Primitive and Standard Types (e.g. `int`, `String`, `Collection`)**: The library can directly serialise these types into JSON string.
+ 2. **\*Scrumptious Model Types (e.g. `Project`, `Task`)**: The library will serialise these types by calling its `toJson()` method which contains the logic for the serialisation.  
+    
+*`Priority` is an exception, it is serialised by calling `name()` of the **enum** which will return its `String` representation.
+    
 
 ### Target user profile
 

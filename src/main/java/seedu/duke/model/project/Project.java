@@ -3,7 +3,6 @@ package seedu.duke.model.project;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import seedu.duke.model.member.ProjectMembers;
-import seedu.duke.model.sprint.SprintRetrospectiveManager;
 import seedu.duke.storage.JsonableObject;
 import seedu.duke.model.sprint.SprintManager;
 import seedu.duke.model.task.TaskManager;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 public class Project implements JsonableObject {
 
     private SprintManager sprintList;
-    private SprintRetrospectiveManager retrospectiveList;
     private TaskManager backlog;
     private ProjectMembers memberList;
     private int projectID;
@@ -43,7 +41,6 @@ public class Project implements JsonableObject {
         backlog = new TaskManager(this);
         memberList = new ProjectMembers();
         sprintList = new SprintManager();
-        retrospectiveList = new SprintRetrospectiveManager();
     }
 
     public String toIdString() {
@@ -90,10 +87,6 @@ public class Project implements JsonableObject {
 
     public SprintManager getSprintList() {
         return sprintList;
-    }
-
-    public SprintRetrospectiveManager getRetrospectiveList() {
-        return retrospectiveList;
     }
 
     public ProjectMembers getProjectMember() {
