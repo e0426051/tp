@@ -157,29 +157,64 @@ A detailed list of the subcommand classes is as follows:
     * `TaskHelpCommand`
 ### Model Component
 ![Figure X: Simplified class diagram for Model Component](./image/developerguide/modelcomponent.png "Storage Component UML")  
-Link: [Model Package](https://github.com/AY2021S1-CS2113T-F11-4/tp/tree/master/src/main/java/seedu/duke/model)  
-The Model
-* Includes four packages namely, Project, Task, Member and Sprint.
+[Model Package](https://github.com/AY2021S1-CS2113T-F11-4/tp/tree/master/src/main/java/seedu/duke/model)  
+The Model package defines all the object classes that are used by SCRUMptious and this section will explain how these objects interact with other components and each other.
 
-Project package
-* Includes a ProjectList to manage the multiple instances of Project created by the user
-* Each instance of Project stores one instance of ProjectBacklog, ProjectMembers and SprintList.
+#### Initialisation
+* Upon starting the program, SCRUMptious will initialise one instance of `ProjectManager` which will be used to facilitate all the operation in the program.
 
-Task  package
-* Includes a ProjectBacklog to manage every Tasks created by the user
-* Task can be allocated to Sprints and can be assigned to Members, 
+#### Operation - Command Execution
+When a `Command` from the [Logic component](#logic-component) is executed, it will work on the same `ProjectManager` initialised previously and will branch down to the necessary packages as required.
 
-Member package
-* Includes a ProjectMembers to manage every Members created by the user
-* Member can be assigned with Tasks and can be allocated to Sprints holding those Tasks
- 
-Sprint package
-* Includes a SprintList to manage every Sprints created by the user
-* Sprint can contain Tasks and Members allocated to those Tasks
+##### Project Operations
+* `ProjectManager` facilitate the management of multiple `Project` instances.
+    * Creation of `Project` adds an entry to `ProjectManager`.
+    * Deletion of `Project` removes an entry from `ProjectManager`.
+* `Project` contain necessary information about the project such as:
+    * Project ID
+    * Project Title
+    * Project Description
+    * Project Duration
+    * Sprint Length
+    * Project Start Date
+    * Project End Date
+* `Project` hold three additional object that are initialise upon its creation:
+    * `ProjectMembers` to facilitate the management of `Members` that are working on the `Project`.
+    * `SprintManager` to facilitate the management of `Sprint` iterations that belongs to the `Project`.
+    * `TaskManager` to facilitate the management of `Tasks` that are broken down from the `Project`.
+##### Members Operations
+* `ProjectMembers` facilitate the management of multiple `Members` instances and is dependant on the `Project` that initialises it.
+    * Creation of `Member` adds an entry to `ProjectMembers`.
+    * Deletion of `Member` removes an entry from `ProjectMembers`.
+* `Member` contain the Member's user ID.
+
+##### Task Operations
+* `TaskManager` facilitate the management of multiple `Task` instances and is dependant on the `Project` that initialises it.
+    * Creation of `Task` adds an entry to `TaskManager`.
+    * Deletion of `Task` removes an entry from `TaskManager`.
+* `Task` contain necessary information about the task such as:
+    * Task ID
+    * Task Title
+    * Task Description
+    * Task Priority
+    * Task Completion Status
+* `Task` contain two additional ArrayList that are initialise upon its creation:
+    * ArrayList of Member's user ID to keep track `Members` who are assigned to work on the task.
+    * ArrayList of Sprint ID to keep track `Sprints` that the task are allocated to.
+
+##### Sprint Operations
+* `SprintManager` will facilitate the management of multiple `Sprint` instances and is dependant on the `Project` that initialises it.
+    * Creation of `Sprint` adds an entry to `SprintManager`.
+* `Sprint` contain necessary information about the iteration such as:
+    * Sprint ID
+    * Sprint Goal
+    * Sprint Start Date
+    * Sprint End Date
+* `Sprint` contain one additional ArrayList that are initialise upon its creation:
+    * ArrayList of Task IDs to keep track `Tasks` that are allocated to the `Sprint`.
 ### Storage Component
-![Figure X: Simplified class diagram for Storage Component, Model and json.simple](./image/developerguide/storagecomponent.png "Storage Component UML")  
-  
-API: [StorageManager.java](/src/main/java/seedu/duke/storage/StorageManager.java)  
+![Figure X: Simplified class diagram for Storage Component, Model and json.simple](./image/developerguide/storagecomponent.png "Storage Component UML") 
+API: [StorageManager.java]( https://github.com/AY2021S1-CS2113T-F11-4/tp/tree/master/src/main/java/seedu/duke/storage/StorageManager.java)  
 The Storage component is using the JavaScript Object Notation (JSON) to save the data. The library used for serialising and deserializing the data is _json.simple 3.1.1_ by **Clifton Labs**.  
 As shown in the diagram above, `JsonableObject` and `JsonableArray` are interfaces which inherits the `Jsonable` interface. The following model class inherits only one of the two interfaces:  
 - ProjectManager  
@@ -198,15 +233,42 @@ This requires the model classes to implement two methods required for JSON seria
 ## Implementation
 ### Project
 #### Create Project
+![Figure X: Sequence diagram of CreateProjectCommand](./image/developerguide/createProjectSequenceDiagram.png
+ "Add Project Sequence Diagram") 
+ Link: [CreateProjectCommand.java](/src/main/java/seedu/duke/command/project/CreateProjectCommand.java) 
 A project is created with a clear title and description of what the team is working on 
-for delivery, as well as the project length and the sprint duration specified.
-Command executed by user `project /create -title <title> -desc <description> -dur <duration> -sd <sprint interval>`
-is passed, the following operations are implemented:
-    * UI receives user input and passes it to Parser class.
-    * Parser checks if input format is valid, and executes a corresponding AddProjectCommand object.
-    * A new project is created, and added to project manager.
+for delivery, as well as the project length and the sprint duration specified. `ProjectManager` stores all the projects
+in a hash table with `projectID`, `project` as key,value pair.
+
+Before execution:
+1. Parse user input `project /create -title <title> -desc <description> -dur <duration> -sd <sprint interval>` into Command
+
+    SCRUMptious will receive user input using the `Ui` class and parse it into `CreateProjectCommand` with `Parser` and
+     `ProjectParser`.
+1. Execute CreateProjectCommand
+
+    SCRUMptious calls `Command.execute()` which will execute the command as mentioned in the implementation.
+
+Implementation:
+
+1. Prepare parameters
+    1. Extracts required arguements, to be passed as parameters for project creation.
+        
+1. `projectManager.addProject()` adds a project using the parameters provided.
+    
+1. Output to User
+    
+    `printCreatedProject()` is then called to output the newly created Project in `addProj.toString` via `Ui
+    .showToUserLn()`
+
+#### List Project
+All the projects added by the user are shown
+
 
 #### Select Project
+
+#### View Project
+
 ### Task
 #### Add Task
 A task is created following the creation of a project, with a clear title, description 

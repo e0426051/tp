@@ -2,6 +2,7 @@ package seedu.duke.command.project;
 
 import seedu.duke.model.project.Project;
 import seedu.duke.model.project.ProjectManager;
+import seedu.duke.model.sprint.Sprint;
 import seedu.duke.ui.Ui;
 
 import java.util.Hashtable;
@@ -37,7 +38,12 @@ public class CreateProjectCommand extends ProjectCommand {
 
         projectManager.addProject(title, description, duration, sd);
         Ui.showToUserLn("Project successfully created.");
+        printCreatedProject(projectManager);
+    }
+
+    private void printCreatedProject(ProjectManager projectManager) {
         Project addProj = projectManager.getSelectedProject();
         Ui.showToUserLn(addProj.toString());
     }
+
 }
