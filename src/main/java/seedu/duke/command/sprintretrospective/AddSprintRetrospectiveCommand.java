@@ -51,7 +51,7 @@ public class AddSprintRetrospectiveCommand extends SprintRetrospectiveCommand {
             return;
         }
 
-        proj.getRetrospectiveList().addRetrospective(sprintId, title, achievement, improvement, commitment);
+        proj.getRetrospectiveList().addRetrospective(sprintId, title, achievement, improvement, commitment, proj);
         SprintRetrospective addedRetrospective = proj.getRetrospectiveList().getLatestRetrospective();
         Ui.showToUserLn("The sprint retrospective is successfully created:");
         Ui.showToUserLn(addedRetrospective.toString());

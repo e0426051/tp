@@ -3,6 +3,7 @@ package seedu.duke.model.project;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import seedu.duke.model.member.ProjectMembers;
+import seedu.duke.model.sprint.SprintRetrospectiveManager;
 import seedu.duke.storage.JsonableObject;
 import seedu.duke.model.sprint.SprintManager;
 import seedu.duke.model.task.TaskManager;
@@ -17,6 +18,7 @@ public class Project implements JsonableObject {
     private SprintManager sprintList;
     private TaskManager backlog;
     private ProjectMembers memberList;
+    private SprintRetrospectiveManager retrospectiveList;
     private int projectID;
     private String title;
     private String description;
@@ -41,6 +43,7 @@ public class Project implements JsonableObject {
         backlog = new TaskManager(this);
         memberList = new ProjectMembers();
         sprintList = new SprintManager();
+        retrospectiveList = new SprintRetrospectiveManager();
     }
 
     public String toIdString() {
@@ -75,6 +78,12 @@ public class Project implements JsonableObject {
         } else {
             projectInString.append(String.format("[There are no Sprints]%n"));
         }
+
+        if (this.retrospectiveList.size() != 0) {
+            projectInString.append(retrospectiveList.toString());
+        } else {
+            projectInString.append(String.format("[There are no Sprint Retrospectives]%n"));
+        }
         projectInString.append(String.format("=================================================================%n"));
         return projectInString.toString();
     }
@@ -103,6 +112,10 @@ public class Project implements JsonableObject {
 
     public String getTitle() {
         return title;
+    }
+
+    public SprintRetrospectiveManager getRetrospectiveList() {
+        return retrospectiveList;
     }
 
     public LocalDate getStartDate() {
@@ -196,6 +209,7 @@ public class Project implements JsonableObject {
         jObj.put("backlog", backlog);
         jObj.put("members", memberList);
         jObj.put("allSprints", sprintList);
+        jObj.put("retrospectiveList", retrospectiveList);
         jObj.toJson(writer);
     }
 
@@ -216,6 +230,7 @@ public class Project implements JsonableObject {
         sprintList.fromJson((JsonObject) jsonObj.get("allSprints"), this);
         backlog.fromJson((JsonObject) jsonObj.get("backlog"), this);
         memberList.fromJson((JsonArray) jsonObj.get("members"));
+        retrospectiveList.fromJson((JsonObject) jsonObj.get("retrospectiveList"), this);
         
     }
 }

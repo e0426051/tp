@@ -15,12 +15,13 @@ public class SprintRetrospective implements JsonableObject {
     private String title;
     private int sprintId;
     private int id;
+    private Project thisProject;
 
     public SprintRetrospective() {
     }
 
     public SprintRetrospective(String title, int sprintId,
-            String achievement, String improvement, String commitment) {
+            String achievement, String improvement, String commitment, Project proj) {
         //achievement = what went well
         //improvement = what can improve
         //goal = what improvements to implement for next sprint
@@ -29,6 +30,7 @@ public class SprintRetrospective implements JsonableObject {
         this.achievement = achievement;
         this.improvement = improvement;
         this.commitment = commitment;
+        this.thisProject = proj;
     }
 
     public String getTitle() {
@@ -44,6 +46,10 @@ public class SprintRetrospective implements JsonableObject {
         retrospectiveString.append(String.format("\n[What needs to improve: %s]", this.improvement));
         retrospectiveString.append(String.format("\n[What to commit to in next sprint: %s]\n", this.commitment));
         return retrospectiveString.toString();
+    }
+
+    public int getSprintId() {
+        return sprintId;
     }
 
     @Override
@@ -66,14 +72,21 @@ public class SprintRetrospective implements JsonableObject {
         jObj.put("achievement", achievement);
         jObj.put("improvement", improvement);
         jObj.put("commitment", commitment);
+        jObj.put("project", thisProject.getProjectID());
         jObj.toJson(writer);
     }
 
-    public void fromJson(JsonObject jsonObj) {
+    public void fromJson(JsonObject jsonObj, Project project) {
+        thisProject = project;
         sprintId = JsonableObject.parseInt(jsonObj,"sprintId");
         title = JsonableObject.parseString(jsonObj, "title");
         achievement = JsonableObject.parseString(jsonObj, "achievement");
         improvement = JsonableObject.parseString(jsonObj, "improvement");
         commitment = JsonableObject.parseString(jsonObj, "commitment");
+    }
+
+    @Override
+    public void fromJson(JsonObject jsonObj) {
+        fromJson(jsonObj, null);
     }
 }

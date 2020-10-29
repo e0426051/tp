@@ -33,12 +33,15 @@ public class ViewSprintRetrospectiveCommand extends SprintRetrospectiveCommand {
             Ui.showError("Missing parameters.");
         }
 
+        Ui.showToUserLn("The sprint retrospective is as follows: ");
         for (int i = 0; i < parameters.size(); i++) {
             try {
+                System.out.println("=================================================================");
                 int id = Integer.parseInt(parameters.get(Integer.toString(i)));
                 SprintRetrospective retrospective = proj.getRetrospectiveList().getRetrospective(id);
-                Ui.showToUserLn("The sprint retrospective is as follows: ");
+
                 Ui.showToUser(retrospective.toString());
+                System.out.println("=================================================================");
             } catch (NumberFormatException e) {
                 Ui.showError("Please enter an integer!");
             } catch (IndexOutOfBoundsException e) {

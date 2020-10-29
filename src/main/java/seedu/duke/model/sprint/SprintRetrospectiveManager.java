@@ -2,6 +2,7 @@ package seedu.duke.model.sprint;
 
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
+import seedu.duke.model.project.Project;
 import seedu.duke.storage.JsonableObject;
 
 import java.io.IOException;
@@ -22,6 +23,10 @@ public class SprintRetrospectiveManager implements JsonableObject {
 
     public int getCurrentIndex() {
         return currentIndex;
+    }
+
+    public ArrayList<SprintRetrospective> getRetrospectiveList() {
+        return retrospectiveList;
     }
 
     public int size() {
@@ -48,9 +53,9 @@ public class SprintRetrospectiveManager implements JsonableObject {
     }
 
     public void addRetrospective(int sprintId, String title, String achievement,
-            String improvement, String commitment) {
+            String improvement, String commitment, Project project) {
         ++currentIndex;
-        retrospectiveList.add(new SprintRetrospective(title, sprintId, achievement, improvement, commitment));
+        retrospectiveList.add(new SprintRetrospective(title, sprintId, achievement, improvement, commitment, project));
     }
 
     @Override
@@ -73,17 +78,20 @@ public class SprintRetrospectiveManager implements JsonableObject {
         jSprintObj.toJson(writer);
     }
 
-    public void fromJson(JsonObject jsonObject) {
+    public void fromJson(JsonObject jsonObject, Project project) {
         this.currentIndex = ((BigDecimal) jsonObject.get("currentIndex")).intValue();
         JsonArray jsonRetrospectives = new JsonArray((JsonArray) jsonObject.get("retrospectiveList"));
 
         for (Object o : jsonRetrospectives) {
             SprintRetrospective retrospective = new SprintRetrospective();
-            retrospective.fromJson((JsonObject) o);
+            retrospective.fromJson((JsonObject) o, project);
             retrospectiveList.add(retrospective);
-            // // //
-            System.out.println("AAA");
         }
+    }
+
+    @Override
+    public void fromJson(JsonObject jsonObj) {
+        fromJson(jsonObj, null);
     }
 }
 

@@ -2,6 +2,9 @@ package seedu.duke.command.sprint;
 
 import seedu.duke.exception.DukeException;
 import seedu.duke.model.project.ProjectManager;
+import seedu.duke.model.sprint.Sprint;
+import seedu.duke.model.sprint.SprintRetrospective;
+import seedu.duke.model.sprint.SprintRetrospectiveManager;
 import seedu.duke.model.task.Task;
 import seedu.duke.ui.Ui;
 
@@ -45,6 +48,17 @@ public class RemoveSprintTaskCommand extends SprintCommand {
             //Update Task
             Task removedTask = this.projOwner.getProjectBacklog().getTask(taskId);
             removedTask.removeFromSprint(this.sprintOwner.getId());
+
+            int offset = 0;
+            SprintRetrospectiveManager retrospectiveManager = projOwner.getRetrospectiveList();
+            ArrayList<SprintRetrospective> retrospectiveList = projOwner.getRetrospectiveList().getRetrospectiveList();
+            //for (SprintRetrospective retrospective : retrospectiveList) {
+            for (int i = 0; i < retrospectiveList.size() - offset; i++) {
+                if (retrospectiveList.get(i).getSprintId() == taskId) {
+                    retrospectiveManager.removeRetrospective(i);
+                    offset++;
+                }
+            }
 
             //Output to user
             Ui.showToUserLn(String.format("\t%s  removed from sprint %s.",
