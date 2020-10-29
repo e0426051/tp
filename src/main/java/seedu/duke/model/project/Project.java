@@ -226,6 +226,7 @@ public class Project implements JsonableObject {
         this.sprintList = new SprintManager();
         this.backlog = new TaskManager();
         this.memberList = new ProjectMembers();
+        this.retrospectiveList = new SprintRetrospectiveManager();
 
         sprintList.fromJson((JsonObject) jsonObj.get("allSprints"), this);
         backlog.fromJson((JsonObject) jsonObj.get("backlog"), this);
