@@ -2,13 +2,17 @@ package seedu.duke.model.task;
 
 import com.github.cliftonlabs.json_simple.JsonObject;
 import seedu.duke.storage.JsonableObject;
+import seedu.duke.ui.Ui;
 
+import java.util.logging.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
 public class Task implements JsonableObject {
+    private static final Logger logger = Logger.getLogger(Task.class.getName());
+
     private int id;
     private String title;
     private String description;
@@ -137,12 +141,26 @@ public class Task implements JsonableObject {
 
     @Override
     public String toJson() {
+        logger.setLevel(Level.WARNING);
+        ConsoleHandler handler = new ConsoleHandler();
+        logger.addHandler(handler);
+        Formatter formatter = handler.getFormatter();
+        handler.setFormatter(formatter);
+        try {
+            FileHandler fileHandler = new FileHandler("scrumptious-task-task.%u.%g.log", true);
+            logger.addHandler(fileHandler);
+        } catch (IOException e) {
+            Ui.showError("Logging error.");
+        }
+
         final StringWriter writeable = new StringWriter();
         try {
             this.toJson(writeable);
+            logger.log(Level.WARNING, "Test log");
         } catch (IOException e) {
             System.out.println("[Error] Cannot convert this project to JSON");
             e.printStackTrace();
+            logger.log(Level.SEVERE,"toJson at Task class", "JSON Conversion error.");
         }
         return writeable.toString();
     }
