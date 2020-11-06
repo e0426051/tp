@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class logger {
+public class Logger {
     public static void createLog(File log) {
         try {
             if (!log.getParentFile().exists()) {
