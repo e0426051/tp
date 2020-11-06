@@ -1,5 +1,6 @@
 package seedu.duke.ui;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -7,8 +8,8 @@ import java.util.Scanner;
  * TextUi that handles user interaction.
  */
 public class Ui {
-    private static final Scanner in = new Scanner(System.in);
-    private static final PrintStream out = System.out;
+    private static Scanner in = new Scanner(System.in);
+    private static PrintStream out = System.out;
 
     /**
      * Prints welcome message.
@@ -78,4 +79,11 @@ public class Ui {
         }
     }
 
+    public static void setInStream(InputStream inStream) {
+        in = new Scanner(inStream);
+    }
+    
+    public static void setOutStream(PrintStream outStream) {
+        out = outStream;
+    }
 }

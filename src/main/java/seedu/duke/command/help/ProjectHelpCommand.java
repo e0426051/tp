@@ -19,7 +19,9 @@ public class ProjectHelpCommand extends Command {
                 + "-desc video streaming software -dur 90 -sd 10");
         Ui.showToUserLn("2. View project");
         Ui.showToUserLn("   Format & example: project /view");
-        Ui.showToUserLn("3. Select project");
+        Ui.showToUserLn("3. View project list");
+        Ui.showToUserLn("   Format & example: project /list");
+        Ui.showToUserLn("4. Select project");
         Ui.showToUserLn("   Format: project /select <projectid>");
         Ui.showToUserLn("   Example: project /select 1");
     }

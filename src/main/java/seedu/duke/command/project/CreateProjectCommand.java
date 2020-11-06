@@ -50,12 +50,12 @@ public class CreateProjectCommand extends ProjectCommand {
         }
         projectManager.addProject(title, description, duration, sd);
         Ui.showToUserLn("Project successfully created.");
-        printCreatedProject(projectManager);
+        Project addedProj = projectManager.getSelectedProject();
+        printCreatedProject(addedProj);
 
     }
 
-    private void printCreatedProject(ProjectManager projectManager) {
-        Project addProj = projectManager.getSelectedProject();
+    private void printCreatedProject(Project addProj) {
         Ui.showToUserLn("\tTitle: " + addProj.getTitle());
     }
 

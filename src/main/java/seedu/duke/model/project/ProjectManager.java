@@ -10,7 +10,7 @@ import java.io.Writer;
 import java.util.Hashtable;
 
 public class ProjectManager implements JsonableObject {
-    public Hashtable<Integer, Project> projectList;
+    private Hashtable<Integer, Project> projectList;
     private int selectedProject;
 
     public ProjectManager() {

@@ -51,7 +51,12 @@ public class StorageManager {
         }
         String rawData = loadRawData();
         JsonObject rawJson = Jsoner.deserialize(rawData, new JsonObject());
-        projectManager.fromJson(rawJson);
+        try {
+            projectManager.fromJson(rawJson);
+        } catch (ClassCastException e) {
+            projectManager.clearProjects();
+            throw e;
+        }
     }
 
     //Private functions    

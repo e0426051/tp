@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seedu.duke.model.project.ProjectManager;
+import seedu.duke.ui.Ui;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +15,7 @@ import java.io.PrintStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClearStorageCommandTest {
-    /*private final InputStream systemIn = System.in;
+    private final InputStream systemIn = System.in;
     private final PrintStream systemOut = System.out;
 
     private ByteArrayInputStream testIn;
@@ -23,7 +24,7 @@ class ClearStorageCommandTest {
     @BeforeEach
     public void setUpOutput() {
         testOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(testOut));
+        Ui.setOutStream(new PrintStream(testOut));
     }
 
 
@@ -33,45 +34,64 @@ class ClearStorageCommandTest {
         assert projectManager.size() > 0 : "Project Manager is empty!";
         ClearStorageCommand csc = new ClearStorageCommand(null, projectManager);
 
-        setUpOutput();
         String input = "y" + System.lineSeparator();
         provideInput(input);
-
         csc.execute();
+        
         String expected = "[!WARNING!] Are you sure? This command is irreversible! (y/N) All data has been cleared!"
                 + System.lineSeparator();
         assertEquals(expected, getOutput());
+        assertEquals(0, projectManager.size());
+        assertEquals(-1, projectManager.getSelectedProjectIndex());
     }
     
-    *//*@Test
+    @Test
     void execute_emptyInput() {
-        String input = "N"+System.lineSeparator();
-        String expected = "[!WARNING!] Are you sure? This command is irreversible! (y/N) Data clear aborted." 
-                + System.lineSeparator();
+        String input = System.lineSeparator();
         ProjectManager projectManager = generateProjectManager();
+        final int oldSelectedProjectIndex = projectManager.getSelectedProjectIndex();
         assert projectManager.size() > 0 : "Project Manager is empty!";
         ClearStorageCommand csc = new ClearStorageCommand(null, projectManager);
 
-        setUpOutput();
         provideInput(input);
-
         csc.execute();
+        
+        String expected = "[!WARNING!] Are you sure? This command is irreversible! (y/N) Data clear aborted."
+                + System.lineSeparator();
         assertEquals(expected, getOutput());
-    }*//*
+        assertEquals(2, projectManager.size());
+        assertEquals(oldSelectedProjectIndex, projectManager.getSelectedProjectIndex());
+    }
+    
+    @Test
+    void execute_noInput() {
+        String input = "N" + System.lineSeparator();
+        ProjectManager projectManager = generateProjectManager();
+        final int oldSelectedProjectIndex = projectManager.getSelectedProjectIndex();
+        assert projectManager.size() > 0 : "Project Manager is empty!";
+        ClearStorageCommand csc = new ClearStorageCommand(null, projectManager);
+
+        provideInput(input);
+        csc.execute();
+        
+        String expected = "[!WARNING!] Are you sure? This command is irreversible! (y/N) Data clear aborted."
+                + System.lineSeparator();
+        assertEquals(expected, getOutput());
+        assertEquals(2, projectManager.size());
+        assertEquals(oldSelectedProjectIndex, projectManager.getSelectedProjectIndex());
+    }
     
     @AfterEach
     public void restoreSystemInputOutput() throws IOException {
         testIn.close();
-        *//*System.out.flush();
-        testOut.close();*//*
-        System.in.reset();
-        System.setIn(systemIn);
-        System.setOut(systemOut);
+        testOut.close();
+        Ui.setInStream(systemIn);
+        Ui.setOutStream(systemOut);
     }
     
     private void provideInput(String data) {
         testIn = new ByteArrayInputStream(data.getBytes());
-        System.setIn(testIn);
+        Ui.setInStream(testIn);
     }
 
     private String getOutput() {
@@ -83,5 +103,5 @@ class ClearStorageCommandTest {
         projectManager.addProject("Test", "test", 50, 10);
         projectManager.addProject("Test2", "test2", 50, 10);
         return projectManager;
-    }*/
+    }
 }

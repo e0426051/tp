@@ -48,11 +48,10 @@ public class Duke {
             sm.load();
         } catch (IOException e) {
             Ui.showError("Unable to load the data file properly, "
-                    + "please fix the data file under data/ directory. Exiting...");
-            exit(1);
+                    + "proceeding in empty state.");
         } catch (ClassCastException e) {
-            Ui.showError("Unable to parse the data file properly, "
-                    + "please check if your data file contains the correct values. Exiting...");
+            Ui.showError("Data file is corrupted, "
+                    + "proceeding in empty state. Old data.json will be cleared when the next save happens.");
         }
         Ui.showWelcomeScreen();
     }

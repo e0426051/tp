@@ -82,24 +82,6 @@ class StorageManagerTest {
         });
     }
 
-    /*@Test
-    void init_IOException() {
-        assertThrows(IOException.class, () -> {
-            Path dataDir = Path.of("data/");
-            Path backUpDir = Path.of("data_bak/");
-            if (Files.exists(dataDir)) {
-                Files.move(dataDir, backUpDir);
-            }
-            Files.createDirectory(dataDir);
-            Files.setPosixFilePermissions(dataDir, PosixFilePermissions.fromString("---------"));
-            ProjectManager projMgr = new ProjectManager();
-            StorageManager sm = new StorageManager(TEST_FILENAME, projMgr);
-            Files.deleteIfExists(dataDir);
-            Files.move(backUpDir, dataDir);
-        });
-    }*/
-
-
     private void initTestFile(Object data) throws IOException {
         if (Files.exists(TEST_FILEPATH)) {
             Files.delete(TEST_FILEPATH);

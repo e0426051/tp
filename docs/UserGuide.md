@@ -63,7 +63,7 @@ SCRUMptious is a command-line project management software, designed for project 
 ## 2. Quick Start
 
 1. Ensure that you have Java 11 or above installed.
-1. Download the latest version of `Scrumptious.jar` from [here](https://github.com/AY2021S1-CS2113T-F11-4/tp/releases/download/v2.0/SCRUMptious.jar)
+1. Download the latest version of `Scrumptious.jar` from [here](https://github.com/AY2021S1-CS2113T-F11-4/tp/releases/download/v2.0/SCRUMptious.jar).
 1. Ensure that you have a functional Command Line Interface (CLI).
 1. Navigate to the folder where the `Scrumptious.jar` is located at. (E.g. `cd "C:\Users\John\Downloads"`)
 ![Directory Example](./image/userguide/directory.jpeg "Directory Example")  
