@@ -4,11 +4,15 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import seedu.duke.storage.JsonableObject;
 import seedu.duke.ui.Ui;
 
-import java.util.logging.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.logging.*;
+
+import static seedu.duke.log.logger.createLog;
+import static seedu.duke.log.logger.getAbsolutePathInString;
 
 public class Task implements JsonableObject {
     private static final Logger logger = Logger.getLogger(Task.class.getName());
@@ -139,30 +143,52 @@ public class Task implements JsonableObject {
         return taskString.toString();
     }
 
-    @Override
-    public String toJson() {
-        logger.setLevel(Level.WARNING);
-        ConsoleHandler handler = new ConsoleHandler();
-        logger.addHandler(handler);
-        Formatter formatter = handler.getFormatter();
-        handler.setFormatter(formatter);
-        try {
-            FileHandler fileHandler = new FileHandler("scrumptious-task-task.%u.%g.log", true);
-            logger.addHandler(fileHandler);
-        } catch (IOException e) {
-            Ui.showError("Logging error.");
-        }
-
+    public String toJsonWithoutLogging() {
         final StringWriter writeable = new StringWriter();
         try {
             this.toJson(writeable);
-            logger.log(Level.WARNING, "Test log");
         } catch (IOException e) {
             System.out.println("[Error] Cannot convert this project to JSON");
             e.printStackTrace();
-            logger.log(Level.SEVERE,"toJson at Task class", "JSON Conversion error.");
         }
         return writeable.toString();
+    }
+
+    @Override
+    public String toJson() {
+        ConsoleHandler handler = new ConsoleHandler();
+        Formatter formatter = new SimpleFormatter();
+        try {
+            logger.setLevel(Level.WARNING);
+            logger.addHandler(handler);
+            handler.setFormatter(formatter);
+        } catch (SecurityException e) {
+            Ui.showError("There is a security violation while logging.");
+        }
+        createLog(new File("./log/scrumptious-task-task-tojson.log"));
+        String pathInString = getAbsolutePathInString("./log/scrumptious-task-task-tojson.log");
+        try {
+            FileHandler fileHandler = new FileHandler(pathInString, true);
+            fileHandler.setFormatter(formatter);
+            logger.addHandler(fileHandler);
+            final StringWriter writeable = new StringWriter();
+            try {
+                this.toJson(writeable);
+                logger.log(Level.WARNING,"test");
+
+
+            } catch (IOException e) {
+                System.out.println("[Error] Cannot convert this project to JSON");
+                e.printStackTrace();
+                logger.log(Level.SEVERE, "toJson at Task class", "JSON Conversion error.");
+            }
+            handler.close();
+            fileHandler.close();
+            return writeable.toString();
+        } catch (IOException e) {
+            Ui.showError("Logging error. toJson will run without logging.");
+            return toJsonWithoutLogging();
+        }
     }
 
     @Override
